@@ -100,12 +100,13 @@ public class MusicSurface extends BaseSurfaceView implements MediaPlayer.OnPrepa
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        mediaPlayer.setOnPreparedListener(this);
-        try {
-            mediaPlayer.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        mediaPlayer.setOnPreparedListener(this);
+//        try {
+//            mediaPlayer.prepare();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        mediaPlayer.start();
         return true;
     }
 
