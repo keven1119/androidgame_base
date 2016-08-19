@@ -19,6 +19,8 @@ public class BaseSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     protected Thread th;
     private boolean flag;
 
+    public static int screenW, screenH;
+
     public BaseSurfaceView(Context context, AttributeSet attrs) {
         this(context, attrs,0);
     }
@@ -36,6 +38,9 @@ public class BaseSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        screenW = this.getWidth();
+        screenH = this.getHeight();
+        flag = true;
         th = new Thread(this);
         th.start();
         myDraw();
@@ -60,8 +65,8 @@ public class BaseSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             long end = System.currentTimeMillis();
 
             try {
-                if(end - start < 50){
-                    Thread.sleep(50 - (end - start));
+                if(end - start < 1000){
+                    Thread.sleep(1000 - (end - start));
                 }
             }catch (InterruptedException e){
                 e.printStackTrace();

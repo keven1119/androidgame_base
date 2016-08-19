@@ -4,12 +4,16 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import androidgamedemo.keven.com.R;
+import androidgamedemo.keven.com.game.GameBg;
+import androidgamedemo.keven.com.game.GameMenu;
+import androidgamedemo.keven.com.game.Player;
 
 /**
  * Created by keven on 16/8/18.
@@ -43,6 +47,10 @@ public class GameSurface extends BaseSurfaceView {
 
     public static int gameState = GAME_MENU;
 
+    private GameMenu gameMenu;
+    private GameBg backGround;
+    private Player player;
+
 
     public GameSurface(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -66,7 +74,8 @@ public class GameSurface extends BaseSurfaceView {
         if(gameState == GAME_MENU){
             bmpBackGround = BitmapFactory.decodeResource(res, R.drawable.background);
             bmpBoom = BitmapFactory.decodeResource(res, R.drawable.boom);
-            bmpBoosBoom = BitmapFactory.decodeResource(res, R.drawable.button);
+            bmpBoosBoom = BitmapFactory.decodeResource(res, R.drawable.boos_boom);
+            bmpButton = BitmapFactory.decodeResource(res, R.drawable.button);
             bmpButtonPress = BitmapFactory.decodeResource(res, R.drawable.button_press);
             bmpEnemyDuck = BitmapFactory.decodeResource(res, R.drawable.enemy_duck);
             bmpEnemyFly = BitmapFactory.decodeResource(res, R.drawable.enemy_fly);
@@ -74,30 +83,54 @@ public class GameSurface extends BaseSurfaceView {
             bmpGameWin = BitmapFactory.decodeResource(res, R.drawable.gamewin);
             bmpGameLost = BitmapFactory.decodeResource(res, R.drawable.gamelost);
             bmpPlayer = BitmapFactory.decodeResource(res, R.drawable.player);
-            bm = BitmapFactory.decodeResource(res, R.drawable.gamelost);
-            bmpGameLost = BitmapFactory.decodeResource(res, R.drawable.gamelost);
-            bmpGameLost = BitmapFactory.decodeResource(res, R.drawable.gamelost);
-            bmpGameLost = BitmapFactory.decodeResource(res, R.drawable.gamelost);
-            bmpGameLost = BitmapFactory.decodeResource(res, R.drawable.gamelost);
+            bmpPlayerHp = BitmapFactory.decodeResource(res, R.drawable.hp);
+            bmpMenu = BitmapFactory.decodeResource(res, R.drawable.menu);
+            bmpBullet = BitmapFactory.decodeResource(res, R.drawable.bullet);
+            bmpEnemyBullet = BitmapFactory.decodeResource(res, R.drawable.bullet_enemy);
+            bmpBossBullet = BitmapFactory.decodeResource(res, R.drawable.boosbullet);
 
-
+            gameMenu = new GameMenu(bmpMenu, bmpButton, bmpButtonPress);
+            backGround = new GameBg(bmpBackGround);
+            player = new Player(bmpPlayer,bmpPlayerHp);
         }
     }
 
     @Override
     protected void myDraw() {
         super.myDraw();
-        switch (gameState){
-            case GAME_MENU:
-                break;
-            case GAMEING:
-                break;
-            case GAME_PAUSE:
-                break;
-            case GAME_WIN:
-                break;
-            case GAME_LOST:
-                break;
+        canvas = sfh.lockCanvas();
+        try {
+            if(null != canvas){
+                switch (gameState){
+                    case GAME_MENU:
+                        if(null != gameMenu) {
+                            gameMenu.draw(this.canvas, paint);
+                        }
+                        break;
+                    case GAMEING:
+                        if(backGround != null){
+                            backGround.draw(canvas,paint);
+                        }
+                        if(null != player){
+                            player.draw(canvas, paint);
+                        }
+                        break;
+                    case GAME_PAUSE:
+                        break;
+                    case GAME_WIN:
+                        break;
+                    case GAME_LOST:
+                        break;
+                }
+            }
+
+        }catch (Exception e){
+
+        }finally {
+            if(null != canvas){
+                sfh.unlockCanvasAndPost(canvas);
+                canvas = null;
+            }
         }
     }
 
@@ -105,6 +138,9 @@ public class GameSurface extends BaseSurfaceView {
     public boolean onTouchEvent(MotionEvent event) {
         switch (gameState){
             case GAME_MENU:
+                if(null != gameMenu) {
+                    gameMenu.onTouchEvent(event);
+                }
                 break;
             case GAMEING:
                 break;
@@ -125,6 +161,12 @@ public class GameSurface extends BaseSurfaceView {
             case GAME_MENU:
                 break;
             case GAMEING:
+                if(backGround != null){
+                    backGround.logic();
+                }
+                if(null != player){
+                    player.logic();
+                }
                 break;
             case GAME_WIN:
                 break;
