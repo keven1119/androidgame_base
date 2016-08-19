@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import androidgamedemo.keven.com.widges.GameSurface;
+
 /**
  * Created by keven on 16/8/19.
  */
@@ -54,5 +56,46 @@ public class Enemy {
     public void draw(Canvas canvas, Paint paint){
         canvas.save();
         canvas.clipRect(x ,y ,x + frameW, y + frameH);
+        canvas.drawBitmap(bmpEnemy, x - frameIndex * frameW, y,paint);
+        canvas.restore();
+    }
+
+    public void logic(){
+        frameIndex++;
+        if(frameIndex >= 10){
+            frameIndex = 0;
+        }
+
+        switch (type){
+            case TYPE_FLY:
+                if(isDead == false){
+                    speed -= 1;
+                    y += speed;
+                    if(y <= -200){
+                        isDead = true;
+                    }
+                }
+                break;
+
+            case TYPE_DUCKL:
+                if(isDead == false){
+                    x += speed / 2;
+                    y += speed;
+                    if(x > GameSurface.screenW){
+                        isDead = true;
+                    }
+                }
+                break;
+
+            case TYPE_DUCKR:
+                if(isDead == false){
+                    x -= speed /2;
+                    y += speed;
+                    if(x < -50){
+                        isDead = true;
+                    }
+                }
+                break;
+        }
     }
 }

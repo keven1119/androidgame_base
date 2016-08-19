@@ -10,7 +10,11 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.Random;
+import java.util.Vector;
+
 import androidgamedemo.keven.com.R;
+import androidgamedemo.keven.com.game.Enemy;
 import androidgamedemo.keven.com.game.GameBg;
 import androidgamedemo.keven.com.game.GameMenu;
 import androidgamedemo.keven.com.game.Player;
@@ -50,6 +54,21 @@ public class GameSurface extends BaseSurfaceView {
     private GameMenu gameMenu;
     private GameBg backGround;
     private Player player;
+
+    private Vector<Enemy> vcEnemy;
+
+    private int createEnemyTime = 50;
+    private int count;
+
+    //1和2表示敌机的种类 ,-1表示boss
+    //二维数组的每一维都是一组怪物
+    private int enemyArray[][] = {
+            {1,2},{1,1},{1,3,1,2},{1,2},{2,3},{3,1,3},{2,2},{1,2},{2,2},
+            {1,3,1,1},{2,1},{1,3},{2,1},{-1}
+    };
+    private int enemyArrayIndex;
+    private boolean isBoss;
+    private Random random;
 
 
     public GameSurface(Context context, AttributeSet attrs) {
@@ -92,6 +111,9 @@ public class GameSurface extends BaseSurfaceView {
             gameMenu = new GameMenu(bmpMenu, bmpButton, bmpButtonPress);
             backGround = new GameBg(bmpBackGround);
             player = new Player(bmpPlayer,bmpPlayerHp);
+
+            vcEnemy = new Vector<Enemy>();
+            random = new Random();
         }
     }
 
@@ -114,6 +136,46 @@ public class GameSurface extends BaseSurfaceView {
                         if(null != player){
                             player.draw(canvas, paint);
                         }
+
+//                        if(isBoss == false){
+                            for (int i = 0;i < vcEnemy.size(); i++){
+                                Enemy enemy = vcEnemy.elementAt(i);
+                                if(enemy.isDead){
+                                    vcEnemy.removeElementAt(i);
+                                }else {
+                                    enemy.draw(canvas,paint);
+                                    enemy.logic();
+                                }
+                            }
+
+                            //生成敌机
+                            count++;
+                            if(count % createEnemyTime ==0){
+                                for(int i= 0; i< enemyArray[enemyArrayIndex].length;i++){
+                                    //苍蝇
+                                    if(enemyArray[enemyArrayIndex][i] == 1){
+                                        int x = random.nextInt(screenW - 100) +50;
+                                        vcEnemy.addElement(new Enemy(bmpEnemyFly,1,x,-50));
+                                    }else if (enemyArray[enemyArrayIndex][i] == 2){
+                                        int y = random.nextInt(20);
+                                        vcEnemy.addElement(new Enemy(bmpEnemyDuck,2,-50,y));
+                                    }else if(enemyArray[enemyArrayIndex][i] == 3){
+                                        int y = random.nextInt(20);
+                                        vcEnemy.addElement(new Enemy(bmpEnemyDuck,3,screenW+50,y));
+                                    }
+                                }
+                            }
+
+                            //判断boss组
+                            if(enemyArrayIndex == enemyArray.length - 1){
+                                isBoss = true;
+                            }else {
+                                enemyArrayIndex++;
+                            }
+//
+//                        }else {
+//                            //Boss逻辑
+//                        }
                         break;
                     case GAME_PAUSE:
                         break;
