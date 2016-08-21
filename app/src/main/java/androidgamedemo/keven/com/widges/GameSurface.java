@@ -14,6 +14,7 @@ import java.util.Random;
 import java.util.Vector;
 
 import androidgamedemo.keven.com.R;
+import androidgamedemo.keven.com.game.Bullet;
 import androidgamedemo.keven.com.game.Enemy;
 import androidgamedemo.keven.com.game.GameBg;
 import androidgamedemo.keven.com.game.GameMenu;
@@ -56,10 +57,8 @@ public class GameSurface extends BaseSurfaceView {
     private Player player;
 
     private Vector<Enemy> vcEnemy;
-
     private int createEnemyTime = 50;
     private int count;
-
     //1和2表示敌机的种类 ,-1表示boss
     //二维数组的每一维都是一组怪物
     private int enemyArray[][] = {
@@ -69,6 +68,11 @@ public class GameSurface extends BaseSurfaceView {
     private int enemyArrayIndex;
     private boolean isBoss;
     private Random random;
+
+    private Vector<Bullet> vcBullet = new Vector<Bullet>();
+    private int countEnemyBullet;
+    private Vector<Bullet> vcBulletPlayer = new Vector<Bullet>();
+    private int countPlayerBullet;
 
 
     public GameSurface(Context context, AttributeSet attrs) {
@@ -137,7 +141,7 @@ public class GameSurface extends BaseSurfaceView {
                             player.draw(canvas, paint);
                         }
 
-//                        if(isBoss == false){
+                        if(isBoss == false){
                             for (int i = 0;i < vcEnemy.size(); i++){
                                 Enemy enemy = vcEnemy.elementAt(i);
                                 if(enemy.isDead){
@@ -172,10 +176,18 @@ public class GameSurface extends BaseSurfaceView {
                             }else {
                                 enemyArrayIndex++;
                             }
+
+                            for (int i = 0; i < vcBullet.size(); i++){
+                                vcBullet.elementAt(i).draw(canvas,paint);
+                            }
 //
-//                        }else {
-//                            //Boss逻辑
-//                        }
+                        }else {
+                            //Boss逻辑
+                        }
+
+                        for (int i = 0;i < vcBulletPlayer.size();i++){
+                            vcBulletPlayer.elementAt(i).draw(canvas,paint);
+                        }
                         break;
                     case GAME_PAUSE:
                         break;
@@ -228,6 +240,60 @@ public class GameSurface extends BaseSurfaceView {
                 }
                 if(null != player){
                     player.logic();
+                }
+
+                if(isBoss == false){
+                    countEnemyBullet++;
+                    if(countEnemyBullet % 40 == 0){
+                        for (int i = 0; i < vcEnemy.size();i++){
+                            Enemy en = vcEnemy.elementAt(i);
+                            int bulletType = 0;
+                            switch (en.type){
+                                case Enemy.TYPE_FLY:
+                                    bulletType = Bullet.BULLET_FLY;
+                                    break;
+                                case Enemy.TYPE_DUCKL:
+                                    case Enemy.TYPE_DUCKR:
+                                        bulletType = Bullet.BULLET_DUCK;
+                                        break;
+                            }
+                            vcBullet.add(new Bullet(bmpEnemyBullet,en.x + 10, en.y + 20,bulletType));
+                        }
+                    }
+
+                    for (int i = 0; i < vcBullet.size();i++){
+                        Bullet bullet = vcBullet.elementAt(i);
+                        if(bullet.isDead){
+                            vcBullet.removeElement(bullet);
+                        }else {
+                            bullet.logic();
+                        }
+                    }
+                }else {
+
+                }
+
+                countPlayerBullet++;
+                if(countPlayerBullet % 20 == 0){
+                    vcBulletPlayer.add(new Bullet(bmpBullet, player.x + 15,player.y - 20, Bullet.BULLET_PLAYER));
+                }
+
+                for (int i = 0; i < vcBulletPlayer.size(); i++){
+                    Bullet bullet = vcBulletPlayer.elementAt(i);
+                    if(bullet.isDead){
+                        vcBulletPlayer.removeElement(bullet);
+                    }else {
+                        bullet.logic();
+                    }
+                }
+
+                for (int i = 0;i < vcBullet.size(); i++){
+                    if (player.isCollsionWith(vcEnemy.elementAt(i))){
+                        player.setPlayerHp(player.getPlayerHp() - 1);
+                        if(player.getPlayerHp() <= -1){
+                            gameState = GAME_LOST;
+                        }
+                    }
                 }
                 break;
             case GAME_WIN:

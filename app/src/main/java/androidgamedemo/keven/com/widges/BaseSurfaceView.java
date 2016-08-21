@@ -65,8 +65,8 @@ public class BaseSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             long end = System.currentTimeMillis();
 
             try {
-                if(end - start < 1000){
-                    Thread.sleep(1000 - (end - start));
+                if(end - start < 50){
+                    Thread.sleep(50 - (end - start));
                 }
             }catch (InterruptedException e){
                 e.printStackTrace();

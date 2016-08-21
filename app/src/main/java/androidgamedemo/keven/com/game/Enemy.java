@@ -100,6 +100,6 @@ public class Enemy {
     }
 
     public boolean isCollsionWith(Bullet bullet){
-        
+
     }
 }

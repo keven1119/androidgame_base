@@ -23,6 +23,10 @@ public class Player {
     private int speed = 5;
     private boolean isUp, isDown, isLeft, isRight;
 
+    private int noCollisionCount = 0;
+    private int noCollisionTime = 60;
+    private boolean isCollision;
+
     public Player(Bitmap bmpPlayer, Bitmap bmpPlayerHp){
         this.bmpPlayer = bmpPlayer;
         this.bmpPlayerHp = bmpPlayerHp;
@@ -36,6 +40,15 @@ public class Player {
         for (int i = 0; i < playerHp; i++){
             canvas.drawBitmap(bmpPlayerHp, i * bmpPlayerHp.getWidth(),
                     GameSurface.screenH - bmpPlayerHp.getHeight(),paint);
+        }
+
+        //处于无敌状态闪烁
+        if(isCollision){
+            if(noCollisionCount % 2 ==0 ){
+                canvas.drawBitmap(bmpPlayer,x,y,paint);
+            }
+        }else {
+            canvas.drawBitmap(bmpPlayer,x,y,paint);
         }
     }
 
@@ -95,6 +108,14 @@ public class Player {
         }else if(y <= 0){
             y = 0;
         }
+
+        if(isCollision){
+            noCollisionCount++;
+            if(noCollisionCount >= noCollisionTime){
+                isCollision = false;
+                noCollisionCount = 0;
+            }
+        }
     }
 
     //设置主角血量
@@ -106,4 +127,28 @@ public class Player {
     public int getPlayerHp(){
         return playerHp;
     }
+
+    //判断碰撞（主角与敌机）
+    public boolean isCollsionWith(Enemy en){
+        if(isCollision = false) {
+            int x2 = en.x;
+            int y2 = en.y;
+            int w2 = en.frameW;
+            int h2 = en.frameH;
+            if (x >= x2 && x >= x2 + w2) {
+                return false;
+            } else if (x <= x2 && x + bmpPlayer.getWidth() <= x2) {
+                return false;
+            } else if (y >= y2 && y >= y2 + h2) {
+                return false;
+            }else if(y <= y2 && y + bmpPlayer.getHeight() <= y2){
+                return false;
+            }
+            isCollision = true;
+            return true;
+        }else {
+            return false;
+        }
+    }
+
 }
