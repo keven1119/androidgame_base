@@ -25,7 +25,7 @@ public class Enemy {
     //敌机坐标
     public int x, y;
     //敌机美帧的宽高
-    private int frameW, frameH;
+    public int frameW, frameH;
     private int frameIndex;
     //敌机移动速度
     private int speed;
@@ -97,5 +97,9 @@ public class Enemy {
                 }
                 break;
         }
+    }
+
+    public boolean isCollsionWith(Bullet bullet){
+        
     }
 }
