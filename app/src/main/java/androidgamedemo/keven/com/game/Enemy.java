@@ -100,6 +100,12 @@ public class Enemy {
     }
 
     public boolean isCollsionWith(Bullet bullet){
+        int x2 = bullet.bulletX;
+        int y2 = bullet.bulletY;
 
+        int w2 = bullet.bmpBullet.getWidth();
+        int h2 = bullet.bmpBullet.getHeight();
+
+        return 
     }
 }
