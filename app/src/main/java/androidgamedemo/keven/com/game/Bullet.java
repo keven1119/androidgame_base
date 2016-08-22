@@ -12,8 +12,8 @@ import androidgamedemo.keven.com.widges.GameSurface;
  */
 public class Bullet {
 
-    private Bitmap bmpBullet;
-    private int bulletX, bulletY;
+    public Bitmap bmpBullet;
+    public int bulletX, bulletY;
     public int speed;
     public int bulletType;
 

@@ -106,6 +106,6 @@ public class Enemy {
         int w2 = bullet.bmpBullet.getWidth();
         int h2 = bullet.bmpBullet.getHeight();
 
-        return 
+        return
     }
 }
